@@ -1,0 +1,93 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h> 
+#define SEATS 20
+
+struct seat { int seatnum;
+char name[50];
+};
+struct seat seats[SEATS];
+
+
+void store() {
+FILE *fp = fopen("bus.txt", "w"); if (fp == NULL) {
+printf("file empty!\n"); return;
+}
+for (int i = 0; i < SEATS; i++) {
+fprintf(fp, "%d %s\n", seats[i].seatnum, seats[i].name);
+}
+fclose(fp);
+}
+
+
+void find() {
+FILE *fp = fopen("bus.txt", "r");
+ 
+if (fp == NULL) { printf("No data found.\n");
+for (int i = 0; i < SEATS; i++) { seats[i].seatnum = i + 1; strcpy(seats[i].name, "EMPTY");
+}
+return;
+}
+
+
+for (int i = 0; i < SEATS; i++) {
+fscanf(fp, "%d %s", &seats[i].seatnum, seats[i].name);
+}
+fclose(fp);
+}
+
+
+void check() {
+printf("\n--- SEAT STATUS ---\n"); for (int i = 0; i < SEATS; i++) {
+printf("Seat %d : %s\n", seats[i].seatnum, seats[i].name);
+}
+}
+
+
+void book() { int n;
+char person[50]; check();
+ 
+printf("\nEnter seat number to book:"); scanf("%d", &n);
+if (n < 1 || n > SEATS) { printf("Invalid seat!\n"); return;
+}
+if (strcmp(seats[n-1].name, "EMPTY") != 0) { printf("Seat already booked!\n");
+return;
+}
+printf("Enter passenger name:"); scanf("%s", person); strcpy(seats[n-1].name, person);
+printf("Seat booked successfully!\n"); store();
+}
+
+
+void cancel() { int n; check();
+printf("\nEnter seat number to cancel:"); scanf("%d", &n);
+if (n < 1 || n > SEATS) { printf("Invalid seat!\n"); return;
+}
+ 
+if (strcmp(seats[n-1].name, "EMPTY") == 0) { printf("Seat is not booked!\n");
+return;
+}
+strcpy(seats[n-1].name, "EMPTY"); printf("Booking cancelled!\n"); store();
+}
+
+
+int main() { int ch; find();
+while (1) {
+printf("\n=== BUS RESERVATION SYSTEM ===\n");
+printf("1.View Seats\n"); printf("2.Book Seat\n"); printf("3.Cancel Seat\n"); printf("4.Exit\n"); printf("\nEnter choice:"); scanf("%d", &ch); switch (ch) {
+case 1:
+find(); break;
+case 2:
+book();
+ 
+break; case 3:
+cancel(); break;
+case 4:
+printf("Goodbye!\n"); return 0;
+default:
+printf("Invalid choice!\n");
+}
+}
+
+
+return 0;
+}
